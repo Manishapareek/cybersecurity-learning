@@ -1,0 +1,1269 @@
+# Day 4 — DNS (Domain Name System) 🌐
+
+## 1. What is DNS?
+
+**DNS = Domain Name System**
+
+DNS is the system that helps translate human-friendly domain names into network information such as IP addresses.
+
+For example:
+
+```text
+example.com
+    ↓
+   DNS
+    ↓
+IP Address
+```
+
+Humans prefer names like:
+
+```text
+google.com
+github.com
+wikipedia.org
+```
+
+Computers need IP addresses to communicate across networks.
+
+So DNS acts like a bridge between:
+
+```text
+Human-friendly name
+        ↓
+      DNS
+        ↓
+Network address
+```
+
+---
+
+# 2. Why Do We Need DNS?
+
+Imagine if every website had to be opened by remembering its IP address.
+
+That would be difficult.
+
+Instead of remembering something like:
+
+```text
+93.184.216.34
+```
+
+we can remember:
+
+```text
+example.com
+```
+
+DNS helps find the corresponding network address.
+
+### Simple Analogy
+
+DNS is often compared to a phone contacts list.
+
+```text
+Person's Name
+     ↓
+Contacts
+     ↓
+Phone Number
+```
+
+Similarly:
+
+```text
+Domain Name
+     ↓
+DNS
+     ↓
+IP Address
+```
+
+This is only an analogy, but it helps explain the basic concept.
+
+---
+
+# 3. What is a Domain Name?
+
+A **domain name** is a human-readable name used to identify resources on the Internet.
+
+Examples:
+
+```text
+google.com
+github.com
+openai.com
+wikipedia.org
+```
+
+A domain name is easier to remember than an IP address.
+
+Example structure:
+
+```text
+www.example.com
+│      │     │
+│      │     └── Top-Level Domain
+│      └──────── Domain name
+└─────────────── Subdomain / hostname part
+```
+
+In:
+
+```text
+example.com
+```
+
+`.com` is the **Top-Level Domain**.
+
+---
+
+# 4. What is DNS Resolution?
+
+The process of finding DNS information for a domain name is called:
+
+**DNS Resolution**
+
+For example:
+
+```text
+example.com
+     ↓
+DNS Resolution
+     ↓
+IP Address
+```
+
+When I type a domain into a browser, the computer needs to determine where that domain exists on the network.
+
+DNS helps provide that information.
+
+---
+
+# 5. Basic DNS Flow
+
+Suppose I type:
+
+```text
+example.com
+```
+
+into my browser.
+
+A simplified flow is:
+
+```text
+Browser
+   ↓
+example.com
+   ↓
+DNS Lookup
+   ↓
+IP Address
+   ↓
+Browser connects to server
+   ↓
+Website response
+```
+
+Important:
+
+> DNS mainly helps resolve the name. It does not normally deliver the actual webpage itself.
+
+The webpage is later transferred using protocols such as HTTP or HTTPS.
+
+---
+
+# 6. DNS vs HTTP/HTTPS
+
+These concepts perform different jobs.
+
+### DNS
+
+```text
+Domain Name
+    ↓
+IP Address
+```
+
+### HTTP/HTTPS
+
+```text
+Browser
+   ↓
+Web Server
+   ↓
+Webpage Data
+```
+
+So:
+
+```text
+DNS       → Finds where to go
+HTTP/HTTPS → Handles web communication
+```
+
+---
+
+# 7. What is a DNS Server?
+
+A **DNS server** is a server/service that processes DNS queries.
+
+For example, a computer may ask:
+
+```text
+"What is the IP address for example.com?"
+```
+
+The DNS system helps return the answer.
+
+A simplified flow:
+
+```text
+Laptop
+  ↓
+DNS Server / Resolver
+  ↓
+DNS Infrastructure
+  ↓
+Answer
+```
+
+---
+
+# 8. What is a DNS Resolver?
+
+A **DNS resolver** is a service that helps find the DNS answer on behalf of the client.
+
+Instead of the laptop manually contacting every part of the DNS system, it usually sends its question to a resolver.
+
+Conceptually:
+
+```text
+Laptop
+  ↓
+"Find example.com for me"
+  ↓
+DNS Resolver
+  ↓
+DNS Infrastructure
+  ↓
+Answer
+```
+
+The resolver performs the necessary lookups and returns the result.
+
+---
+
+# 9. DNS is Distributed
+
+There is not one giant DNS server containing the entire Internet.
+
+DNS is a **distributed and hierarchical system**.
+
+A simplified DNS hierarchy looks like:
+
+```text
+Recursive Resolver
+       ↓
+Root DNS
+       ↓
+TLD DNS
+       ↓
+Authoritative DNS
+       ↓
+Answer
+```
+
+This structure allows DNS to scale across the Internet.
+
+---
+
+# 10. Root DNS Servers 🌳
+
+Root DNS servers exist at the top of the DNS hierarchy.
+
+They help direct DNS resolvers toward the correct **Top-Level Domain servers**.
+
+Suppose the resolver wants information about:
+
+```text
+example.com
+```
+
+The root system may effectively help answer:
+
+```text
+"For .com domains, ask these servers."
+```
+
+The root does not necessarily provide the final IP address.
+
+Instead, it often provides the next direction.
+
+---
+
+# 11. TLD — Top-Level Domain
+
+**TLD = Top-Level Domain**
+
+Examples:
+
+```text
+.com
+.org
+.net
+.in
+.edu
+```
+
+For:
+
+```text
+example.com
+```
+
+the TLD is:
+
+```text
+.com
+```
+
+For:
+
+```text
+example.org
+```
+
+the TLD is:
+
+```text
+.org
+```
+
+The TLD system can direct the resolver toward the authoritative DNS servers for a domain.
+
+---
+
+# 12. Authoritative DNS Server 👑
+
+An **authoritative DNS server** stores or provides authoritative DNS records for a domain.
+
+For example, the resolver may eventually ask:
+
+```text
+"What is the A record for example.com?"
+```
+
+The authoritative DNS server can provide the relevant record.
+
+Conceptually:
+
+```text
+Resolver
+   ↓
+Authoritative DNS
+   ↓
+DNS Record
+   ↓
+Resolver
+   ↓
+Client
+```
+
+---
+
+# 13. Full DNS Resolution Flow 🔥
+
+A simplified full resolution flow:
+
+```text
+User enters:
+
+example.com
+     ↓
+Computer needs address
+     ↓
+DNS Resolver
+     ↓
+Root DNS
+     ↓
+".com is handled there"
+     ↓
+TLD DNS
+     ↓
+"Authoritative DNS is there"
+     ↓
+Authoritative DNS
+     ↓
+Returns DNS Record
+     ↓
+Resolver
+     ↓
+Computer
+     ↓
+Computer now knows where to connect
+```
+
+Real DNS can be faster because cached answers may already exist.
+
+---
+
+# 14. What is DNS Cache? ⚡
+
+A **DNS cache** temporarily stores previously resolved DNS information.
+
+Suppose a domain has already been resolved.
+
+Instead of performing the full DNS process again, the cached answer may be used.
+
+Example:
+
+```text
+First Request
+
+example.com
+    ↓
+DNS Lookup
+    ↓
+Answer
+    ↓
+Stored in Cache
+```
+
+Later:
+
+```text
+example.com
+    ↓
+DNS Cache
+    ↓
+Answer
+```
+
+### Benefits of DNS Cache
+
+* Faster DNS lookups
+* Less network traffic
+* Less work for DNS servers
+
+---
+
+# 15. What is DNS TTL?
+
+DNS records commonly have a:
+
+**TTL = Time To Live**
+
+DNS TTL tells caches how long a record may be kept before it should be refreshed.
+
+Example concept:
+
+```text
+TTL = 3600 seconds
+```
+
+This means the record may be cached for approximately one hour, depending on the DNS system and cache behavior.
+
+---
+
+# 16. DNS TTL vs IP TTL
+
+The term **TTL** also appeared earlier in the `ping` command.
+
+These are different concepts.
+
+### IP Packet TTL
+
+Used in IP packets to prevent packets from being forwarded forever.
+
+```text
+IP TTL
+→ Reduced by routers
+→ Prevents endless routing loops
+```
+
+### DNS TTL
+
+Used for DNS caching.
+
+```text
+DNS TTL
+→ Tells caches how long a DNS record can remain cached
+```
+
+### Important
+
+```text
+Same abbreviation
+Different purpose
+```
+
+---
+
+# 17. What is a DNS Record?
+
+DNS stores different types of information in structures called **DNS records**.
+
+Different record types serve different purposes.
+
+For Day 4, the most important are:
+
+* A
+* AAAA
+
+---
+
+# 18. A Record
+
+An **A record** maps a hostname/domain name to an IPv4 address.
+
+Example:
+
+```text
+example.com
+    ↓
+A Record
+    ↓
+IPv4 Address
+```
+
+### Memory Trick
+
+```text
+A → IPv4
+```
+
+---
+
+# 19. AAAA Record
+
+An **AAAA record** maps a hostname/domain name to an IPv6 address.
+
+Example:
+
+```text
+example.com
+    ↓
+AAAA Record
+    ↓
+IPv6 Address
+```
+
+### Memory Trick
+
+```text
+AAAA → IPv6
+```
+
+---
+
+# 20. A vs AAAA
+
+| Record | Used For |
+| ------ | -------- |
+| A      | IPv4     |
+| AAAA   | IPv6     |
+
+Memory:
+
+```text
+A    → IPv4
+AAAA → IPv6
+```
+
+---
+
+# 21. How DNS Connects With Previous Lessons
+
+DNS works together with many networking concepts.
+
+Suppose I type:
+
+```text
+example.com
+```
+
+A simplified flow:
+
+```text
+Domain Name
+     ↓
+DNS Resolution
+     ↓
+Destination IP
+     ↓
+Computer checks routing
+     ↓
+Destination outside local network?
+     ↓
+Default Gateway
+     ↓
+Router
+     ↓
+NAT
+     ↓
+ISP
+     ↓
+Internet
+     ↓
+Destination Server
+```
+
+So previous topics connect like this:
+
+```text
+DNS
+→ Finds the IP
+
+IP Address
+→ Identifies network destination
+
+Subnet Mask
+→ Helps determine local vs remote network
+
+Default Gateway
+→ Sends non-local traffic toward another network
+
+Router
+→ Forwards packets
+
+NAT
+→ Translates addressing in typical IPv4 home networks
+```
+
+---
+
+# 22. Practical 1 — Check My DNS Server 💻
+
+On Windows, open Command Prompt and run:
+
+```cmd
+ipconfig /all
+```
+
+Look under the active network adapter for:
+
+```text
+DNS Servers
+```
+
+Example:
+
+```text
+DNS Servers : 192.168.1.1
+```
+
+In many home networks, the router may act as a local DNS forwarder and send DNS requests to another upstream resolver.
+
+The exact address depends on the network.
+
+---
+
+# 23. Practical 2 — Basic `nslookup`
+
+Windows provides the command:
+
+```cmd
+nslookup
+```
+
+It can be used to query DNS information.
+
+For example:
+
+```cmd
+nslookup example.com
+```
+
+A typical output may show:
+
+```text
+Server:
+Address:
+
+Name:
+Addresses:
+```
+
+The exact output will vary depending on the DNS resolver and network.
+
+---
+
+# 24. Understanding `nslookup` Output
+
+Run:
+
+```cmd
+nslookup example.com
+```
+
+You may see something similar to:
+
+```text
+Server:  router
+Address: 192.168.1.1
+
+Name:    example.com
+Addresses: ...
+```
+
+### Server
+
+This shows the DNS server/resolver that `nslookup` used.
+
+### Address
+
+The address of that DNS resolver.
+
+### Name
+
+The domain name being queried.
+
+### Addresses
+
+The IP address or addresses returned by DNS.
+
+A domain can sometimes return multiple addresses.
+
+---
+
+# 25. Practical 3 — Query an A Record
+
+To specifically request an IPv4 A record:
+
+```cmd
+nslookup -type=A example.com
+```
+
+This asks DNS for:
+
+```text
+A Record
+     ↓
+IPv4 Address
+```
+
+The result may contain one or more IPv4 addresses.
+
+---
+
+# 26. Practical 4 — Query an AAAA Record
+
+To request an IPv6 AAAA record:
+
+```cmd
+nslookup -type=AAAA example.com
+```
+
+This asks DNS for:
+
+```text
+AAAA Record
+      ↓
+IPv6 Address
+```
+
+The exact result depends on whether the domain has an IPv6 record.
+
+---
+
+# 27. Practical 5 — Compare Domain and IP
+
+Run:
+
+```cmd
+nslookup example.com
+```
+
+Observe the returned address.
+
+This demonstrates:
+
+```text
+Domain Name
+     ↓
+DNS Query
+     ↓
+IP Address
+```
+
+This is DNS resolution happening practically.
+
+---
+
+# 28. Practical 6 — View Windows DNS Cache
+
+Windows can display locally cached DNS information.
+
+Run:
+
+```cmd
+ipconfig /displaydns
+```
+
+This may show cached DNS records.
+
+The output can be large.
+
+Look for fields such as:
+
+```text
+Record Name
+Record Type
+Time To Live
+```
+
+This demonstrates that the system can temporarily cache DNS information.
+
+---
+
+# 29. Practical 7 — Clear DNS Cache
+
+On my own Windows computer, the DNS resolver cache can be cleared using:
+
+```cmd
+ipconfig /flushdns
+```
+
+A successful result may display a message indicating that the DNS Resolver Cache was cleared.
+
+This removes cached DNS entries from the local Windows resolver cache.
+
+For normal learning practice, this should only be done on my own device.
+
+---
+
+# 30. DNS Cache Practical Flow
+
+A simple experiment:
+
+### Step 1
+
+Run:
+
+```cmd
+nslookup example.com
+```
+
+### Step 2
+
+Check local DNS cache:
+
+```cmd
+ipconfig /displaydns
+```
+
+### Step 3
+
+Clear local DNS cache:
+
+```cmd
+ipconfig /flushdns
+```
+
+### Step 4
+
+View it again:
+
+```cmd
+ipconfig /displaydns
+```
+
+Note:
+
+`nslookup` and the Windows DNS Client cache do not always interact exactly like normal application lookups, so cached entries may not appear exactly as expected.
+
+The main purpose of this exercise is to become familiar with the DNS tools.
+
+---
+
+# 31. DNS Query Example
+
+Suppose the laptop wants to access:
+
+```text
+github.com
+```
+
+Conceptually:
+
+```text
+Laptop:
+"What address belongs to github.com?"
+       ↓
+DNS Resolver
+       ↓
+DNS Infrastructure
+       ↓
+Returns DNS information
+       ↓
+Laptop
+       ↓
+Connects toward destination
+```
+
+This process usually happens automatically and very quickly.
+
+---
+
+# 32. DNS Does Not Mean Internet Connection
+
+DNS and Internet connectivity are related but different.
+
+If DNS fails, a device may have Internet connectivity but be unable to resolve domain names.
+
+For example:
+
+```text
+Internet connection → Working
+DNS resolution      → Failing
+```
+
+In that situation:
+
+```text
+example.com
+```
+
+may fail to resolve even though the basic network path still exists.
+
+This is one reason DNS is an important troubleshooting concept.
+
+---
+
+# 33. Common DNS Troubleshooting Idea
+
+If a website name does not resolve, a basic diagnostic command is:
+
+```cmd
+nslookup example.com
+```
+
+This helps answer:
+
+```text
+"Is DNS returning an address for this domain?"
+```
+
+It does not prove that the website itself is fully working.
+
+It only helps test the DNS resolution part.
+
+---
+
+# 34. `ping` vs `nslookup`
+
+These commands answer different questions.
+
+### `nslookup`
+
+```text
+Question:
+"What DNS information exists for this name?"
+```
+
+### `ping`
+
+```text
+Question:
+"Does this target respond to ICMP Echo Requests?"
+```
+
+Example:
+
+```cmd
+nslookup example.com
+```
+
+tests DNS resolution.
+
+```cmd
+ping example.com
+```
+
+may first require DNS resolution and then attempts an ICMP ping.
+
+### Memory Trick
+
+```text
+nslookup → DNS
+ping     → ICMP reachability test
+```
+
+---
+
+# 35. DNS and Multiple IP Addresses
+
+A single domain name can return multiple IP addresses.
+
+Example concept:
+
+```text
+example.com
+     ↓
+DNS
+     ↓
+IP Address 1
+IP Address 2
+IP Address 3
+```
+
+This can be used for reasons such as:
+
+* Availability
+* Load distribution
+* Geographic routing
+* Redundancy
+
+Therefore:
+
+> One domain does not always mean exactly one IP address.
+
+---
+
+# 36. One IP Can Also Serve Multiple Domains
+
+The reverse can also happen.
+
+Multiple domain names can ultimately point toward the same IP address.
+
+Conceptually:
+
+```text
+site-a.com ─┐
+site-b.com ─┼──→ Same IP Address
+site-c.com ─┘
+```
+
+Modern web servers can host multiple websites on the same IP address.
+
+So:
+
+```text
+Domain ≠ permanently one unique IP
+```
+
+---
+
+# 37. Complete Day 4 Flow 🔥
+
+```text
+User types:
+example.com
+     ↓
+Browser / OS needs destination address
+     ↓
+DNS Cache checked
+     ↓
+If answer not available
+     ↓
+DNS Resolver
+     ↓
+Root / TLD / Authoritative DNS as needed
+     ↓
+DNS Record returned
+     ↓
+IP Address obtained
+     ↓
+Routing decision
+     ↓
+Default Gateway if destination is remote
+     ↓
+Router / NAT
+     ↓
+ISP
+     ↓
+Internet
+     ↓
+Destination Server
+     ↓
+HTTP / HTTPS communication
+```
+
+---
+
+# 38. Important Differences
+
+## Domain vs IP
+
+```text
+Domain → Human-friendly name
+IP     → Network address
+```
+
+## DNS vs HTTP
+
+```text
+DNS  → Resolves names
+HTTP → Transfers web requests/responses
+```
+
+## A vs AAAA
+
+```text
+A    → IPv4
+AAAA → IPv6
+```
+
+## DNS TTL vs IP TTL
+
+```text
+DNS TTL → Cache lifetime
+IP TTL  → Limits packet forwarding lifetime
+```
+
+## `nslookup` vs `ping`
+
+```text
+nslookup → DNS query
+ping     → ICMP reachability test
+```
+
+---
+
+# 39. Important Terms
+
+| Term              | Meaning                                         |
+| ----------------- | ----------------------------------------------- |
+| DNS               | Domain Name System                              |
+| Domain Name       | Human-friendly Internet name                    |
+| DNS Resolution    | Process of resolving DNS information for a name |
+| DNS Resolver      | Service that resolves DNS queries for clients   |
+| Root DNS          | Top level of the DNS hierarchy                  |
+| TLD               | Top-Level Domain                                |
+| Authoritative DNS | Authoritative source for a domain's DNS records |
+| DNS Cache         | Temporary storage of DNS answers                |
+| DNS TTL           | How long a DNS record may be cached             |
+| A Record          | Maps a name to IPv4                             |
+| AAAA Record       | Maps a name to IPv6                             |
+| `nslookup`        | DNS query/troubleshooting command               |
+
+---
+
+# 40. What I Learned
+
+After Day 4, I understand that:
+
+* DNS stands for Domain Name System.
+* DNS helps resolve human-friendly names into network information such as IP addresses.
+* Domain names are easier for humans to remember than IP addresses.
+* DNS resolution is the process of finding DNS information for a domain.
+* DNS is distributed and hierarchical.
+* Recursive resolvers perform DNS lookups for clients.
+* Root DNS helps direct queries toward TLD servers.
+* TLD servers help direct queries toward authoritative DNS servers.
+* Authoritative DNS servers provide DNS records for domains.
+* DNS caches improve performance by temporarily storing answers.
+* DNS TTL controls how long DNS information may remain cached.
+* A records are used for IPv4.
+* AAAA records are used for IPv6.
+* DNS does not itself deliver the webpage.
+* `nslookup` can be used to inspect DNS information.
+* A domain may have multiple IP addresses.
+* Multiple domains may also point to the same IP address.
+
+---
+
+# 41. Commands Practiced
+
+### View configured DNS servers
+
+```cmd
+ipconfig /all
+```
+
+### Basic DNS lookup
+
+```cmd
+nslookup example.com
+```
+
+### Query IPv4 A record
+
+```cmd
+nslookup -type=A example.com
+```
+
+### Query IPv6 AAAA record
+
+```cmd
+nslookup -type=AAAA example.com
+```
+
+### Display local Windows DNS cache
+
+```cmd
+ipconfig /displaydns
+```
+
+### Clear local Windows DNS cache
+
+```cmd
+ipconfig /flushdns
+```
+
+These commands are safe for basic learning on my own Windows computer.
+
+---
+
+# 42. Quick Revision 🧠
+
+```text
+DNS
+→ Domain Name System
+
+DOMAIN
+→ Human-friendly name
+
+DNS RESOLUTION
+→ Name → DNS information / IP
+
+RESOLVER
+→ Finds DNS answer for client
+
+ROOT
+→ Points toward TLD system
+
+TLD
+→ .com, .org, .in, etc.
+
+AUTHORITATIVE DNS
+→ Provides authoritative DNS records
+
+A RECORD
+→ IPv4
+
+AAAA RECORD
+→ IPv6
+
+DNS CACHE
+→ Temporarily stores answers
+
+DNS TTL
+→ Cache lifetime
+
+NSLOOKUP
+→ DNS query tool
+```
+
+### Final Memory Flow
+
+```text
+Domain
+  ↓
+DNS Resolver
+  ↓
+DNS Hierarchy
+  ↓
+DNS Record
+  ↓
+IP Address
+  ↓
+Network Communication
+```
+
+## Day 4 Status
+
+**DNS Fundamentals + `nslookup` Practice — Completed ✅**

@@ -1,0 +1,908 @@
+# Day 3 — Public & Private IP, Static & Dynamic IP, DHCP and NAT 🌐
+
+## 1. Overview
+
+On Day 2, I learned that devices use IP addresses for network communication.
+
+Now an important question appears:
+
+> Are all IP addresses used in the same way?
+
+No.
+
+In IPv4 networking, addresses can be discussed in terms of:
+
+* **Public vs Private**
+* **Static vs Dynamic**
+
+I also learned about:
+
+* **DHCP**
+* **NAT**
+
+These concepts explain how devices receive network configuration and how typical home IPv4 networks communicate with the Internet.
+
+---
+
+# 2. Private IP Address 🏠
+
+A **private IPv4 address** is an address reserved for use inside private networks.
+
+Examples include home, school, and office networks.
+
+A typical home network might look like:
+
+```text id="9gn0yf"
+Laptop → 192.168.1.23
+Phone  → 192.168.1.24
+TV     → 192.168.1.25
+Router → 192.168.1.1
+```
+
+These addresses allow devices to communicate within the private network.
+
+Private IPv4 addresses are **not globally routable on the public Internet**.
+
+---
+
+# 3. Private IPv4 Ranges
+
+Three IPv4 ranges are reserved for private networks:
+
+```text id="ivpz0y"
+10.0.0.0     – 10.255.255.255
+
+172.16.0.0   – 172.31.255.255
+
+192.168.0.0  – 192.168.255.255
+```
+
+These can also be written as:
+
+```text id="2e7j95"
+10.0.0.0/8
+
+172.16.0.0/12
+
+192.168.0.0/16
+```
+
+A common home-network address such as:
+
+```text id="y9zggv"
+192.168.1.23
+```
+
+belongs to the private `192.168.0.0/16` range.
+
+### Memory Trick
+
+```text id="hyy4ig"
+Private IP → Used inside a private/local network
+```
+
+---
+
+# 4. Can Different Networks Use the Same Private IP?
+
+Yes.
+
+For example:
+
+```text id="19oy30"
+Home A
+
+Laptop → 192.168.1.23
+```
+
+and:
+
+```text id="3o78u4"
+Home B
+
+Laptop → 192.168.1.23
+```
+
+can both exist.
+
+There is no direct conflict because these devices are on **separate private networks**.
+
+Private IPv4 addresses are designed to be reusable across different private networks.
+
+This is different from public IPv4 addressing, where an address being routed on the public Internet needs appropriate global uniqueness within that routing context.
+
+---
+
+# 5. Public IP Address 🌍
+
+A **public IP address** is an address that can be globally routed across the public Internet.
+
+Public addresses are used for communication between networks over the Internet.
+
+A simplified home network:
+
+```text id="axqk42"
+Laptop
+Private IP
+    ↓
+Router
+    ↓
+ISP
+    ↓
+Public Internet
+    ↓
+Destination Server
+```
+
+The exact Internet-facing addressing depends on the ISP and network design.
+
+### Public vs Private
+
+| Private IP                                 | Public IP                                |
+| ------------------------------------------ | ---------------------------------------- |
+| Used inside private networks               | Routable on the public Internet          |
+| Not globally routable                      | Used for Internet routing                |
+| Can be reused in separate private networks | Requires globally coordinated addressing |
+| Example: `192.168.1.23`                    | Depends on the Internet connection       |
+
+### Memory Trick
+
+```text id="pkvc1n"
+Private → Inside the private network
+Public  → Public Internet routing
+```
+
+---
+
+# 6. Why Do We Use Private IPv4 Addresses?
+
+IPv4 has a limited address space because IPv4 addresses are only **32 bits** long.
+
+A home can contain many devices:
+
+```text id="hj2uy7"
+Laptop
+Phone
+Tablet
+Smart TV
+Printer
+Gaming Console
+IoT Devices
+```
+
+Giving every device its own globally routable public IPv4 address would consume many public addresses.
+
+Private addressing allows devices inside different private networks to reuse the reserved address ranges.
+
+For Internet access in typical IPv4 home networks, private addressing is commonly combined with **NAT**.
+
+---
+
+# 7. What is NAT? 🔄
+
+**NAT = Network Address Translation**
+
+NAT is a networking technique that translates IP addressing information between networks.
+
+In a typical home IPv4 setup, the router or gateway performs NAT between the private network and the Internet-facing network.
+
+Example:
+
+```text id="82gtrg"
+             PRIVATE NETWORK
+
+Laptop → 192.168.1.23 ──┐
+Phone  → 192.168.1.24 ──┼──→ Router/NAT ──→ Internet
+TV     → 192.168.1.25 ──┘
+```
+
+The devices have separate private IP addresses, but NAT allows their connections to communicate through the Internet-facing side of the network.
+
+---
+
+# 8. NAT — Basic Communication Flow
+
+Suppose a laptop with:
+
+```text id="i2w53s"
+192.168.1.23
+```
+
+opens a website.
+
+A simplified flow is:
+
+```text id="o5m4ps"
+Laptop
+192.168.1.23
+Private IP
+     ↓
+Default Gateway / Router
+     ↓
+NAT
+     ↓
+ISP
+     ↓
+Internet
+     ↓
+Website Server
+```
+
+The router maintains translation/state information so that returning traffic can be associated with the correct internal connection.
+
+This explanation is simplified, but it captures the main idea.
+
+---
+
+# 9. NAT vs Router
+
+A router and NAT are not the same concept.
+
+### Router
+
+A **router** forwards packets between networks.
+
+### NAT
+
+**NAT** translates addressing information between networks.
+
+A typical home router may perform both functions:
+
+```text id="rww5o5"
+             HOME ROUTER
+                  │
+        ┌─────────┴─────────┐
+        ↓                   ↓
+     Routing               NAT
+        │                   │
+Forwards packets      Translates addresses
+between networks      between network sides
+```
+
+### Memory Trick
+
+```text id="ehh3ow"
+Router → Forward
+NAT    → Translate
+```
+
+---
+
+# 10. NAT and IPv4 Address Conservation
+
+One important benefit of NAT is **IPv4 address conservation**.
+
+Imagine:
+
+```text id="y0o7dx"
+Laptop → Private IP
+Phone  → Private IP
+TV     → Private IP
+Tablet → Private IP
+```
+
+Instead of requiring a separate globally routable public IPv4 address for every device, a typical NAT-based network can allow multiple internal devices/connections to share Internet-facing IPv4 connectivity.
+
+This has helped reduce the demand for public IPv4 addresses.
+
+### Important Distinction
+
+**What NAT does:**
+
+```text id="kjukbr"
+Address Translation
+```
+
+**One major benefit:**
+
+```text id="zbfip7"
+Public IPv4 address conservation
+```
+
+These are related, but they are not the same statement.
+
+---
+
+# 11. NAT and Ports — A Small Preview
+
+Typical home IPv4 networks commonly use a form of translation involving **port numbers** as well as IP addresses.
+
+This is often called **PAT (Port Address Translation)** or NAT overload.
+
+Conceptually:
+
+```text id="45kyy9"
+Laptop connection ─┐
+Phone connection  ─┼──→ Router/NAT ──→ Internet
+TV connection     ─┘
+```
+
+The router can use translation/state information to distinguish different connections.
+
+Ports will be covered properly in a later networking lesson, so detailed port translation is not required yet.
+
+---
+
+# 12. What is a Static IP? 🗿
+
+A **static IP address** is configured or assigned so that it remains fixed/predictable rather than being automatically changed as part of normal dynamic address assignment.
+
+For example, a network administrator may want a printer to consistently use:
+
+```text id="50i0zb"
+192.168.1.50
+```
+
+This makes the device easier to find at a known address.
+
+Static addressing may be useful for:
+
+* Servers
+* Printers
+* Network equipment
+* Devices that need predictable addressing
+
+### Memory Trick
+
+```text id="xk4nxf"
+Static → Fixed / Predictable
+```
+
+---
+
+# 13. What is a Dynamic IP? 🔄
+
+A **dynamic IP address** is assigned automatically and may change over time.
+
+For example:
+
+```text id="vgzpfp"
+Today:
+Laptop → 192.168.1.23
+
+Later:
+Laptop → 192.168.1.35
+```
+
+A dynamic address **can change**, but this does not mean that it must change every day or every time the device reconnects.
+
+The same address may be assigned again.
+
+### Memory Trick
+
+```text id="80noxv"
+Dynamic → Automatically assigned and can change
+```
+
+---
+
+# 14. Static/Dynamic vs Public/Private 🚨
+
+This is one of the most important Day 3 concepts.
+
+**Public/Private** and **Static/Dynamic** describe different properties.
+
+### Public vs Private asks:
+
+> Where/how is the address used and routed?
+
+### Static vs Dynamic asks:
+
+> How is the address assigned or maintained?
+
+Therefore, all of these combinations can exist:
+
+| Combination       | Possible? |
+| ----------------- | --------- |
+| Private + Static  | ✅         |
+| Private + Dynamic | ✅         |
+| Public + Static   | ✅         |
+| Public + Dynamic  | ✅         |
+
+For example, a laptop on a home network may have a:
+
+```text id="6qj2zc"
+Private + Dynamic IPv4 address
+```
+
+while a server could use a predictable/static address depending on its network design.
+
+### Important
+
+```text id="e1fpbf"
+Public ≠ Static
+Private ≠ Dynamic
+```
+
+These concepts are independent.
+
+---
+
+# 15. What is DHCP? 📋
+
+**DHCP = Dynamic Host Configuration Protocol**
+
+DHCP allows devices to automatically obtain network configuration.
+
+Without automatic configuration, network settings could need to be manually configured on devices.
+
+With DHCP:
+
+```text id="qehq1j"
+Laptop connects to network
+        ↓
+DHCP process
+        ↓
+Network configuration is provided
+```
+
+DHCP can provide information such as:
+
+* IP address
+* Subnet mask
+* Default gateway
+* DNS server addresses
+
+### Memory Trick
+
+```text id="n2wz0u"
+DHCP → Automatic network configuration
+```
+
+---
+
+# 16. DHCP Server
+
+A **DHCP server** provides DHCP configuration to clients.
+
+In many home networks, the router provides the DHCP server function.
+
+Conceptually:
+
+```text id="yaxvkm"
+Laptop
+   │
+   │ Needs configuration
+   ↓
+DHCP Server
+   │
+   ↓
+IP Address
+Subnet Mask
+Default Gateway
+DNS Server
+```
+
+The laptop is the **DHCP client** in this situation.
+
+---
+
+# 17. What is a DHCP Lease? ⏳
+
+DHCP addresses are commonly assigned for a period known as a **lease**.
+
+Example:
+
+```text id="md9rl3"
+Lease Obtained → Day 1
+Lease Expires  → Day 2
+```
+
+The client normally attempts to renew its lease before it expires.
+
+An expiring lease does **not** mean:
+
+> “My IP will definitely change.”
+
+Instead:
+
+> The address is dynamically managed and may be renewed or another address may eventually be assigned.
+
+### Memory Trick
+
+```text id="px2ogf"
+DHCP Lease → Temporary assignment period
+```
+
+---
+
+# 18. Practical 1 — View Detailed Network Configuration 💻
+
+On Windows, open Command Prompt and run:
+
+```cmd id="k8h79x"
+ipconfig /all
+```
+
+This provides detailed information about network adapters.
+
+For learning purposes, focus on the **active network adapter**.
+
+Useful fields include:
+
+```text id="1jfb0n"
+DHCP Enabled
+IPv4 Address
+Subnet Mask
+Default Gateway
+DHCP Server
+DNS Servers
+Lease Obtained
+Lease Expires
+```
+
+Avoid publishing unnecessary identifiers such as complete MAC addresses, hostnames, or full unredacted network dumps.
+
+---
+
+# 19. Practical 2 — Identify DHCP
+
+In the active adapter, look for:
+
+```text id="jptnjv"
+DHCP Enabled : Yes
+```
+
+If DHCP is enabled, the interface is configured to obtain relevant IPv4 configuration automatically through DHCP.
+
+Then look for:
+
+```text id="g3m9rf"
+DHCP Server
+```
+
+Example:
+
+```text id="s6ow02"
+DHCP Server : 192.168.1.1
+```
+
+In a typical home network, this may be the router providing DHCP service.
+
+---
+
+# 20. Practical 3 — Identify a Private IPv4 Address
+
+Look for:
+
+```text id="0xk8cw"
+IPv4 Address
+```
+
+Example:
+
+```text id="32qj26"
+IPv4 Address : 192.168.1.23
+```
+
+Because this address belongs to the:
+
+```text id="f7o8mk"
+192.168.0.0/16
+```
+
+private range, it is a **private IPv4 address**.
+
+This demonstrates private addressing on a real local network.
+
+---
+
+# 21. Practical 4 — Observe the DHCP Lease
+
+With:
+
+```cmd id="v84brp"
+ipconfig /all
+```
+
+look for:
+
+```text id="agypa8"
+Lease Obtained
+Lease Expires
+```
+
+This shows the current DHCP lease timing.
+
+Example:
+
+```text id="gzvw7m"
+Lease Obtained : Saturday
+Lease Expires  : Sunday
+```
+
+This does not guarantee that the IP will change when the listed lease period ends.
+
+DHCP clients normally attempt lease renewal.
+
+---
+
+# 22. One Device Can Perform Multiple Network Roles
+
+A home router may appear multiple times in `ipconfig /all`.
+
+For example:
+
+```text id="7h7hks"
+Default Gateway : 192.168.1.1
+DHCP Server     : 192.168.1.1
+DNS Server      : 192.168.1.1
+```
+
+This does not mean these concepts are identical.
+
+It means the **same device can provide multiple services/functions**.
+
+Conceptually:
+
+```text id="dkg0av"
+             HOME ROUTER
+             192.168.1.1
+                   │
+        ┌──────────┼──────────┐
+        ↓          ↓          ↓
+     Gateway      DHCP       DNS-related
+      Role       Service      Service
+```
+
+The roles are different even when the same device provides them.
+
+---
+
+# 23. Can `ipconfig /all` Show NAT?
+
+Not directly.
+
+`ipconfig /all` primarily displays configuration associated with the computer's network interfaces.
+
+NAT is normally performed by the router/gateway or another network device, so the laptop's `ipconfig` output does not simply contain:
+
+```text id="hmltp8"
+NAT Enabled : Yes
+```
+
+Instead, NAT is understood from the network architecture or examined on equipment that performs the translation.
+
+Typical home IPv4 architecture:
+
+```text id="agk57g"
+Laptop
+Private IPv4
+     ↓
+Router / Gateway
+     ↓
+NAT
+     ↓
+ISP
+     ↓
+Internet
+```
+
+---
+
+# 24. Public IP and ISP Networks — Important Detail
+
+A simplified beginner diagram often shows:
+
+```text id="77eq4q"
+Home Router
+     ↓
+Public IP
+     ↓
+Internet
+```
+
+However, real ISP networks can be more complicated.
+
+Some ISPs use **Carrier-Grade NAT (CGNAT)**.
+
+In such a setup, the customer's router may not receive its own globally routable public IPv4 address directly.
+
+Conceptually:
+
+```text id="smhj0y"
+Home Devices
+Private IPs
+    ↓
+Home Router
+    ↓
+ISP Network
+    ↓
+Carrier-Grade NAT
+    ↓
+Public Internet
+```
+
+For beginner networking, the main concept remains:
+
+> Private IPv4 addresses are not directly globally routed on the public Internet, and NAT is commonly used when connecting private IPv4 networks to Internet-facing IPv4 networks.
+
+---
+
+# 25. Complete Day 3 Flow 🔥
+
+A simplified home IPv4 setup:
+
+```text id="u6u2kg"
+               HOME NETWORK
+
+Laptop
+192.168.1.23
+Private + possibly Dynamic
+        │
+        ↓
+Subnet Mask
+"Is destination local?"
+        │
+        ↓
+If destination is outside local network
+        │
+        ↓
+Default Gateway / Router
+192.168.1.1
+        │
+        ↓
+NAT
+Address Translation
+        │
+        ↓
+ISP
+        │
+        ↓
+Internet
+        │
+        ↓
+Destination Server
+```
+
+When the laptop first joins the network, DHCP may automatically provide:
+
+```text id="9a5hdp"
+IP Address
+Subnet Mask
+Default Gateway
+DNS Server
+```
+
+This connects the concepts from Day 2 and Day 3.
+
+---
+
+# 26. Important Differences
+
+## Private IP vs Public IP
+
+```text id="4dhkvr"
+Private → Private/local network
+Public  → Public Internet routing
+```
+
+## Static vs Dynamic
+
+```text id="3xg8gr"
+Static  → Fixed/predictable
+Dynamic → Automatically assigned and can change
+```
+
+## Router vs NAT
+
+```text id="1b4kv7"
+Router → Forwards packets between networks
+NAT    → Translates network addressing information
+```
+
+## DHCP vs NAT
+
+```text id="xkv7v2"
+DHCP → Gives clients network configuration
+NAT  → Translates addressing between networks
+```
+
+## Subnet Mask vs NAT
+
+```text id="ttnvs4"
+Subnet Mask → Helps determine the local subnet
+NAT         → Address translation
+```
+
+---
+
+# 27. Important Terms
+
+| Term        | Meaning                                        |
+| ----------- | ---------------------------------------------- |
+| Private IP  | Address reserved for private networks          |
+| Public IP   | Globally routable Internet address             |
+| NAT         | Network Address Translation                    |
+| Static IP   | Fixed/predictable address assignment           |
+| Dynamic IP  | Automatically assigned address that can change |
+| DHCP        | Dynamic Host Configuration Protocol            |
+| DHCP Server | Provides automatic network configuration       |
+| DHCP Client | Device receiving DHCP configuration            |
+| DHCP Lease  | Time-based DHCP address assignment             |
+| Router      | Forwards packets between networks              |
+| CGNAT       | Carrier-Grade Network Address Translation      |
+
+---
+
+# 28. What I Learned
+
+After Day 3, I understand that:
+
+* Private IPv4 addresses are used inside private networks.
+* Private IPv4 addresses can be reused in separate networks.
+* Public IP addresses are used for routing across the public Internet.
+* NAT stands for Network Address Translation.
+* NAT translates addressing information between networks.
+* NAT helps conserve public IPv4 addresses.
+* A router and NAT are not the same concept.
+* Static addresses are configured to remain predictable.
+* Dynamic addresses can be assigned automatically and may change.
+* Public/private and static/dynamic are independent classifications.
+* DHCP stands for Dynamic Host Configuration Protocol.
+* DHCP can automatically provide IP configuration.
+* DHCP commonly uses leases.
+* A DHCP lease expiring does not guarantee that the IP address will change.
+* A single home router can perform gateway, DHCP, DNS-related, routing, and NAT functions.
+
+---
+
+# 29. Quick Revision 🧠
+
+```text id="x63n4f"
+PRIVATE IP
+→ Used inside private networks
+
+PUBLIC IP
+→ Globally routable on the public Internet
+
+NAT
+→ Network Address Translation
+→ Translates addressing between networks
+
+STATIC
+→ Fixed / predictable
+
+DYNAMIC
+→ Automatically assigned
+→ Can change
+
+DHCP
+→ Dynamic Host Configuration Protocol
+→ Automatic network configuration
+
+DHCP LEASE
+→ Time-based assignment period
+
+ROUTER
+→ Forwards packets
+
+NAT
+→ Translates addresses
+```
+
+### Final Memory Flow
+
+```text id="0e0lxc"
+Device connects
+      ↓
+DHCP provides configuration
+      ↓
+Device gets private IP
+      ↓
+Destination outside local network?
+      ↓
+Default Gateway / Router
+      ↓
+NAT
+      ↓
+ISP
+      ↓
+Internet
+      ↓
+Destination
+```
+
+## Day 3 Status
+
+**Public/Private IP + Static/Dynamic IP + DHCP + NAT — Completed ✅**

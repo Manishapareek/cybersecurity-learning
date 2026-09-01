@@ -1,0 +1,806 @@
+# Day 2 — IP Address 🌐
+
+## 1. What is an IP Address?
+
+**IP = Internet Protocol**
+
+An **IP address** is a network address used to identify/address a device or network interface and help data reach the correct destination.
+
+A simple analogy:
+
+```text
+House Address → Helps identify a house/location
+IP Address    → Helps identify/address a destination on a network
+```
+
+For example, devices connected to a home network may have different IP addresses so that network traffic can be delivered to the correct device.
+
+> An IP address should not be thought of as a permanent universal ID for a physical device. A device can have multiple network interfaces/addresses, and its addresses may change.
+
+---
+
+# 2. Why Do We Need IP Addresses?
+
+Imagine a network containing several devices:
+
+```text
+Laptop
+Phone
+Printer
+Smart TV
+```
+
+If data is being transmitted across the network, the networking system needs addressing information to determine where the data should go.
+
+Conceptually:
+
+```text
+Source Device
+     ↓
+Network
+     ↓
+Destination IP Address
+     ↓
+Destination Device
+```
+
+IP addresses provide this network-layer addressing.
+
+---
+
+# 3. IPv4
+
+**IPv4 = Internet Protocol Version 4**
+
+IPv4 addresses are **32 bits** long.
+
+They are commonly written as four decimal numbers separated by dots.
+
+Example:
+
+```text
+192.168.1.23
+```
+
+The four parts are called **octets**:
+
+```text
+192 . 168 . 1 . 23
+ ↑     ↑     ↑    ↑
+Octet Octet Octet Octet
+```
+
+Each octet represents 8 bits.
+
+Therefore:
+
+```text
+8 + 8 + 8 + 8 = 32 bits
+```
+
+## IPv4 Octet Range
+
+Each octet can have a decimal value from:
+
+```text
+0 to 255
+```
+
+Therefore:
+
+```text
+192.168.1.23
+```
+
+has a valid IPv4 address format.
+
+But:
+
+```text
+192.168.256.23
+```
+
+is invalid because `256` is outside the `0–255` range.
+
+### IPv4 Memory Trick
+
+```text
+IPv4
+ ↓
+32 bits
+ ↓
+4 octets
+ ↓
+8 bits per octet
+ ↓
+Each octet: 0–255
+```
+
+---
+
+# 4. IPv6
+
+**IPv6 = Internet Protocol Version 6**
+
+IPv6 addresses are **128 bits** long.
+
+Example IPv6 format:
+
+```text
+2001:db8:85a3::8a2e:370:7334
+```
+
+IPv6 uses hexadecimal notation and is much larger than IPv4.
+
+The most important beginner-level difference is:
+
+| IPv4                    | IPv6                                  |
+| ----------------------- | ------------------------------------- |
+| 32-bit                  | 128-bit                               |
+| Smaller address space   | Extremely large address space         |
+| Dotted-decimal notation | Hexadecimal, colon-separated notation |
+| Example: `192.168.1.23` | Example: `2001:db8::1`                |
+
+One major reason IPv6 was developed was to provide a vastly larger address space than IPv4.
+
+### Memory Trick
+
+```text
+IPv4 = 32 bits
+IPv6 = 128 bits
+```
+
+---
+
+# 5. What is Localhost?
+
+**Localhost** refers to the local computer itself.
+
+For IPv4, the loopback network is:
+
+```text
+127.0.0.0/8
+```
+
+The address most commonly used for localhost is:
+
+```text
+127.0.0.1
+```
+
+Conceptually:
+
+```text
+My Computer
+     ↓
+127.0.0.1
+     ↓
+My Computer
+```
+
+Traffic sent to the loopback address stays within the local host rather than being sent across the physical network to another machine.
+
+### Easy Memory Trick
+
+```text
+127.0.0.1 = This computer / localhost
+```
+
+---
+
+# 6. `127.0.0.1` vs My LAN IP
+
+These are not the same thing.
+
+For example:
+
+```text
+127.0.0.1
+```
+
+means the local machine through its **loopback interface**.
+
+A LAN address such as:
+
+```text
+192.168.1.23
+```
+
+can represent the computer's IPv4 address on a particular local network.
+
+Conceptually:
+
+```text
+127.0.0.1
+    ↓
+Loopback
+    ↓
+Same Computer
+
+
+192.168.1.23
+    ↓
+Network Interface
+    ↓
+Local Network
+```
+
+A computer can therefore have both a loopback address and one or more addresses associated with physical/virtual network interfaces.
+
+---
+
+# 7. Practical 1 — Find My IP Configuration 💻
+
+On Windows, open **Command Prompt** and run:
+
+```cmd
+ipconfig
+```
+
+The active network adapter may display information such as:
+
+```text
+IPv4 Address
+Subnet Mask
+Default Gateway
+```
+
+Example:
+
+```text
+IPv4 Address    : 192.168.1.23
+Subnet Mask     : 255.255.255.0
+Default Gateway : 192.168.1.1
+```
+
+These values will differ depending on the network.
+
+> When publishing notes online, avoid posting unnecessary personal/device identifiers or complete network dumps. Example or redacted values are enough.
+
+---
+
+# 8. What is a Subnet Mask?
+
+A **subnet mask** helps a device determine which part of an IPv4 address represents the network and which part represents the host, allowing it to determine whether a destination belongs to the local subnet.
+
+Example:
+
+```text
+IP Address  : 192.168.1.23
+Subnet Mask : 255.255.255.0
+```
+
+`255.255.255.0` is also commonly represented as:
+
+```text
+/24
+```
+
+For this `/24` example, addresses such as:
+
+```text
+192.168.1.23
+192.168.1.50
+```
+
+belong to the same `192.168.1.0/24` subnet, assuming normal host addressing.
+
+But:
+
+```text
+192.168.2.50
+```
+
+belongs to a different `/24` subnet.
+
+### Beginner Memory Trick
+
+```text
+Subnet Mask → Helps answer:
+"Is this destination on my local subnet?"
+```
+
+---
+
+# 9. What is Subnetting?
+
+**Subnetting** is the process of dividing an IP network into smaller logical networks called **subnets**.
+
+For example, an organization could logically separate networks for different groups:
+
+```text
+            Organization
+                 │
+       ┌─────────┴─────────┐
+       ↓                   ↓
+Student Subnet       Staff Subnet
+```
+
+Subnetting can help with network organization, routing, address management, and separation.
+
+Detailed subnet calculations are a separate topic. For Day 2, the important distinction is:
+
+```text
+Subnet Mask → Describes the network/host boundary
+Subnetting  → Dividing networks into smaller subnets
+```
+
+---
+
+# 10. What is a Default Gateway?
+
+A **default gateway** is the next-hop router a device normally sends traffic to when the destination is not reachable through a more specific local route.
+
+In a typical home network, the default gateway is usually the local IPv4 address of the router.
+
+Example:
+
+```text
+Laptop
+192.168.1.23
+     ↓
+Default Gateway
+192.168.1.1
+     ↓
+Other Networks
+     ↓
+Internet
+```
+
+### Easy Memory Trick
+
+```text
+Default Gateway
+        ↓
+"Where should I send traffic for other networks?"
+```
+
+---
+
+# 11. Subnet Mask + Gateway Together
+
+Suppose:
+
+```text
+My IP      = 192.168.1.23
+Subnet     = 255.255.255.0 (/24)
+Gateway    = 192.168.1.1
+```
+
+Destination:
+
+```text
+192.168.1.50
+```
+
+This is on the same `/24` subnet, so the device can communicate with it locally without sending that traffic to the default gateway for routing.
+
+Now consider:
+
+```text
+192.168.2.50
+```
+
+This is outside `192.168.1.0/24`.
+
+The computer's routing logic may therefore use its default route and send the traffic toward:
+
+```text
+192.168.1.1
+```
+
+assuming no more specific route exists.
+
+Simplified:
+
+```text
+Destination
+    ↓
+Local subnet?
+   /     \
+ YES      NO
+ ↓         ↓
+Local    Default
+network  Gateway
+```
+
+---
+
+# 12. What is Ping? 🏓
+
+`ping` is a network diagnostic utility commonly used to test whether a target responds to **ICMP Echo Request** messages.
+
+It can provide information such as:
+
+* Whether ping replies are received
+* Round-trip time
+* Packet loss observed during the test
+
+Example:
+
+```cmd
+ping 127.0.0.1
+```
+
+Possible successful output:
+
+```text
+Reply from 127.0.0.1: bytes=32 time<1ms TTL=128
+```
+
+---
+
+# 13. Practical 2 — Ping Localhost
+
+Run:
+
+```cmd
+ping 127.0.0.1
+```
+
+Example result:
+
+```text
+Packets: Sent = 4, Received = 4, Lost = 0
+```
+
+This tests the local TCP/IP stack through the loopback interface.
+
+The packets do not need to travel to the router or across the Internet.
+
+Conceptually:
+
+```text
+Computer
+   ↓
+127.0.0.1
+   ↓
+Same Computer
+```
+
+---
+
+# 14. Understanding Ping Output
+
+Example:
+
+```text
+Reply from 127.0.0.1: bytes=32 time<1ms TTL=128
+```
+
+### `Reply from`
+
+The target responded to the ICMP Echo Request.
+
+### `bytes=32`
+
+The Windows ping command used a 32-byte data payload in the request.
+
+### `time<1ms`
+
+The measured round-trip time was less than one millisecond.
+
+Loopback communication is usually extremely fast because the packet does not travel across a physical external network.
+
+### `TTL`
+
+**TTL = Time To Live**
+
+At the IP layer, TTL limits how long an IPv4 packet can continue being forwarded through routers.
+
+Routers decrease the TTL as the packet is forwarded. If it reaches zero, the packet is discarded.
+
+This prevents packets from circulating indefinitely because of routing loops.
+
+---
+
+# 15. Packet Loss
+
+A ping summary may look like:
+
+```text
+Packets: Sent = 4
+Received = 4
+Lost = 0 (0% loss)
+```
+
+This means all four ping requests received corresponding replies during that test.
+
+If:
+
+```text
+Sent = 4
+Received = 3
+Lost = 1
+```
+
+then the measured ping packet loss is:
+
+```text
+25%
+```
+
+However, ping should not be treated as a perfect test of whether a service is working.
+
+A device or firewall may intentionally ignore ICMP Echo Requests even while other services are functioning normally.
+
+---
+
+# 16. Practical 3 — Ping the Local Gateway
+
+First use:
+
+```cmd
+ipconfig
+```
+
+Find the IPv4 default gateway.
+
+Then, on a network I own or am authorized to use, I can test it:
+
+```cmd
+ping <default-gateway>
+```
+
+For example:
+
+```cmd
+ping 192.168.1.1
+```
+
+A successful response indicates that the gateway responded to the ping test.
+
+Conceptually:
+
+```text
+Laptop
+192.168.1.23
+     │
+     │ ICMP Echo
+     ↓
+Gateway
+192.168.1.1
+```
+
+This is different from:
+
+```cmd
+ping 127.0.0.1
+```
+
+because `127.0.0.1` stays on the local computer, while pinging the gateway involves communication over the local network.
+
+---
+
+# 17. Localhost vs LAN IP vs Gateway
+
+This is one of the most important Day 2 concepts.
+
+Example setup:
+
+```text
+127.0.0.1
+     ↓
+My own computer / loopback
+
+
+192.168.1.23
+     ↓
+My computer's IPv4 address on the LAN
+
+
+192.168.1.1
+     ↓
+Default gateway/router on the LAN
+```
+
+These addresses perform different roles.
+
+### Memory Trick
+
+```text
+127.0.0.1    → ME (loopback)
+
+192.168.1.23 → MY DEVICE ON THIS LAN
+
+192.168.1.1  → MY GATEWAY
+```
+
+The exact LAN addresses vary from network to network.
+
+---
+
+# 18. Why Did `127.0.0.1` Fail in My Browser but Ping Worked?
+
+Typing:
+
+```text
+127.0.0.1
+```
+
+into a browser can produce a connection error.
+
+But:
+
+```cmd
+ping 127.0.0.1
+```
+
+may still work successfully.
+
+These results are not contradictory.
+
+`ping` uses ICMP to test for an Echo Reply.
+
+A browser attempts to connect to a web service using HTTP/HTTPS, usually through a TCP connection to a web port.
+
+If no local web server is listening where the browser tries to connect, the browser can fail even though loopback networking itself works.
+
+Simplified:
+
+```text
+ping 127.0.0.1
+        ↓
+Local networking responds
+        ↓
+SUCCESS
+
+
+Browser → 127.0.0.1
+        ↓
+Is a web server listening?
+        ↓
+No
+        ↓
+Connection error
+```
+
+This demonstrates an important networking principle:
+
+> **An IP address can be reachable while a particular application/service is unavailable.**
+
+---
+
+# 19. IP Address Is Not the Same as a Device's Permanent Identity
+
+An IP address should not be treated as a permanent hardware identity.
+
+A laptop might use one IP address on a home network and another address on a school network.
+
+Example:
+
+```text
+Home Network
+Laptop → 192.168.1.23
+
+Different Network
+Laptop → 192.168.0.15
+```
+
+The same physical device can therefore use different IP addresses depending on its network configuration.
+
+A device can also have multiple addresses at the same time, such as:
+
+```text
+Loopback IPv4
+LAN IPv4
+IPv6 addresses
+```
+
+---
+
+# 20. Complete Day 2 Flow 🔥
+
+A simplified model:
+
+```text
+                    MY COMPUTER
+
+              Loopback: 127.0.0.1
+
+                       │
+                       │ Network Interface
+                       ↓
+
+               LAN IPv4 Address
+                 192.168.1.23
+                       │
+                       │
+                Local Network
+                       │
+                       ↓
+                Default Gateway
+                 192.168.1.1
+                       │
+                       ↓
+                 Other Networks
+```
+
+The subnet mask helps the computer determine whether a destination belongs to its local subnet.
+
+---
+
+# 21. Commands Practiced
+
+### View basic IP configuration
+
+```cmd
+ipconfig
+```
+
+### Test IPv4 loopback
+
+```cmd
+ping 127.0.0.1
+```
+
+### Test my own local gateway
+
+```cmd
+ping <my-default-gateway>
+```
+
+Only perform network tests on systems and networks you own or are authorized to use.
+
+---
+
+# 22. Important Terms
+
+| Term            | Meaning                                                           |
+| --------------- | ----------------------------------------------------------------- |
+| IP              | Internet Protocol                                                 |
+| IP Address      | Network-layer address                                             |
+| IPv4            | 32-bit Internet Protocol addressing                               |
+| IPv6            | 128-bit Internet Protocol addressing                              |
+| Octet           | 8 bits                                                            |
+| Localhost       | Local machine                                                     |
+| `127.0.0.1`     | Common IPv4 loopback address                                      |
+| Subnet Mask     | Helps identify network/host portions and local subnet             |
+| Subnetting      | Dividing a network into smaller subnets                           |
+| Default Gateway | Default next-hop router for non-local destinations                |
+| Ping            | ICMP-based diagnostic utility                                     |
+| TTL             | Time To Live                                                      |
+| Packet Loss     | Ping requests for which replies were not received during the test |
+
+---
+
+# 23. What I Learned
+
+After Day 2, I understand:
+
+* IP addresses provide network-layer addressing.
+* IPv4 addresses are 32 bits long.
+* IPv4 uses four 8-bit octets.
+* Each IPv4 octet ranges from `0` to `255`.
+* IPv6 addresses are 128 bits long.
+* `127.0.0.1` commonly represents the local machine through IPv4 loopback.
+* A LAN IP and loopback IP serve different purposes.
+* A subnet mask helps determine the local subnet.
+* A default gateway provides a route toward other networks.
+* `ping` can test ICMP reachability and show round-trip time and observed packet loss.
+* A successful ping does not guarantee that every application/service on the target is available.
+
+---
+
+# 24. Quick Revision 🧠
+
+```text
+IP            → Network addressing
+IPv4          → 32 bits
+IPv6          → 128 bits
+IPv4 Octets   → 4
+Octet Range   → 0–255
+
+127.0.0.1     → Localhost / loopback
+Subnet Mask   → Helps identify the local subnet
+Gateway       → Default next hop to other networks
+Ping          → ICMP reachability diagnostic
+
+127.0.0.1     → My own computer
+LAN IP        → My device on the local network
+Gateway IP    → Router/next hop toward other networks
+```
+
+## Day 2 Status
+
+**IP Address Fundamentals + Basic Practical — Completed ✅**
